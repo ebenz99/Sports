@@ -49,11 +49,11 @@ PPG = tf.placeholder(tf.float32)
 OPPG = tf.placeholder(tf.float32)
 WINS = tf.placeholder(tf.float32)
 
-WINS_pred = tf.add(tf.add((tf.multiply(W1,tf.square(PPG))),B),tf.multiply(tf.square(W2),OPPG))
+WINS_pred = tf.add(tf.add((tf.multiply(W1,(PPG))),B),tf.multiply((W2),OPPG))
 cost = tf.log(tf.reduce_sum(tf.square(tf.subtract(WINS,WINS_pred))))
 
-learning_rate = .001
-epochs = 10000
+learning_rate = .0005
+epochs = 30000
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
 
 log = []
@@ -99,18 +99,30 @@ predictions = []
 wins = []
 
 for i in range(0,30):
-	print("Weight",w1,"times",statsArr[i][1],"squared plus weight",w2,"times",statsArr[i][2],"plus", b, "equals",(statsArr[i][1]*w1*statsArr[i][1])+(w2*statsArr[i][2]*statsArr[i][2])+b,"vs",statsArr[i][14])
-	predictions.append((statsArr[i][1]*w1*statsArr[i][1])+(w2*statsArr[i][2]*statsArr[i][2])+b)
+	print("Weight",w1,"times",statsArr[i][1],"plus weight",w2,"times",statsArr[i][2],"plus", b, "equals",(statsArr[i][1]*w1)+(w2*statsArr[i][2])+b,"vs",statsArr[i][14])
+	predictions.append((statsArr[i][1]*w1)+(w2*statsArr[i][2])+b)
 	wins.append(statsArr[i][14])
 
 #predictions vs wins
+norm_preds = [i/sum(predictions) for i in predictions]
+norm_wins = [i/sum(wins) for i in wins]
+import matplotlib.pyplot as plt
+
+plt.axis([0, 30, 0, .1])
+for i in range(0,30):
+	plt.plot(i,norm_preds[i],'ro')
+	plt.plot(i,norm_wins[i],'b^')
+plt.show()
+
+
+'''
 import matplotlib.pyplot as plt
 plt.axis([0, 30, 20, 68])
 for i in range(0,30):
 	plt.plot(i,predictions[i],'ro')
 	plt.plot(i,wins[i],'b^')
 plt.show()
-
+'''
 
 '''
 import matplotlib.pyplot as plt
