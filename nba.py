@@ -41,17 +41,19 @@ for idx,team in enumerate(stats):
 #learning part
 import tensorflow as tf 
 
-W1 = tf.Variable(tf.scalar_mul(100,tf.ones([1])))
-B = tf.Variable(tf.scalar_mul(100,tf.ones([1])))
+W1 = tf.Variable(tf.scalar_mul(0,tf.ones([1])))
+W2 = tf.Variable(tf.scalar_mul(0,tf.ones([1])))
+B = tf.Variable(tf.scalar_mul(0,tf.ones([1])))
 
 PPG = tf.placeholder(tf.float32)
+OPPG = tf.placeholder(tf.float32)
 WINS = tf.placeholder(tf.float32)
 
-WINS_pred = tf.add((tf.multiply(W1,tf.square(PPG))),B)
+WINS_pred = tf.add(tf.add((tf.multiply(W1,tf.square(PPG))),B),tf.multiply(tf.square(W2),OPPG))
 cost = tf.log(tf.reduce_sum(tf.square(tf.subtract(WINS,WINS_pred))))
 
 learning_rate = .001
-epochs = 5000
+epochs = 10000
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
 
 log = []
@@ -62,16 +64,18 @@ with tf.Session() as sess:
 	min_cost = 9000
 	for epoch in range(0,epochs):
 		for team in statsArr:
-			sess.run(optimizer, feed_dict={PPG:team[1],WINS:team[14]})
-		training_cost = sess.run(cost,feed_dict={PPG:statsArr[:,1],WINS:statsArr[:,14]})
+			sess.run(optimizer, feed_dict={PPG:team[1],OPPG:team[2],WINS:team[14]})
+		training_cost = sess.run(cost,feed_dict={PPG:statsArr[:,1],OPPG:statsArr[:,2],WINS:statsArr[:,14]})
 		#log.append(training_cost)
-		print(training_cost)
+		#print(training_cost)
 		if training_cost < min_cost:
 			print("old",min_cost,"new",training_cost)
 			min_cost=training_cost
-			a = W1.eval()
+			w1 = W1.eval()
+			w2 = W2.eval()
 			b = B.eval()
-			print(a)
+			print(w1)
+			print(w2)
 		'''
 		if(training_cost<12):
 			print("training cost",training_cost)
@@ -89,14 +93,14 @@ for i in range(0,epochs):
 	plt.plot(i,log[i],'.')
 plt.show()
 '''
-print("final weight is ", a)
+print("final weights are ", w1, w2)
 
 predictions = []
 wins = []
 
 for i in range(0,30):
-	print("Weight",a,"times",statsArr[i][1],"squared plus", b, "equals",(statsArr[i][1]*a*statsArr[i][1])+b,"vs",statsArr[i][14])
-	predictions.append((statsArr[i][1]*a*statsArr[i][1])+b)
+	print("Weight",w1,"times",statsArr[i][1],"squared plus weight",w2,"times",statsArr[i][2],"plus", b, "equals",(statsArr[i][1]*w1*statsArr[i][1])+(w2*statsArr[i][2]*statsArr[i][2])+b,"vs",statsArr[i][14])
+	predictions.append((statsArr[i][1]*w1*statsArr[i][1])+(w2*statsArr[i][2]*statsArr[i][2])+b)
 	wins.append(statsArr[i][14])
 
 #predictions vs wins
