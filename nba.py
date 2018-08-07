@@ -52,8 +52,8 @@ WINS = tf.placeholder(tf.float32)
 WINS_pred = tf.add(tf.add((tf.multiply(W1,(PPG))),B),tf.multiply((W2),OPPG))
 cost = tf.log(tf.reduce_sum(tf.square(tf.subtract(WINS,WINS_pred))))
 
-learning_rate = .0005
-epochs = 30000
+learning_rate = .001
+epochs = 110000
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
 
 log = []
