@@ -1,5 +1,4 @@
 #tutorial from the tensorflow documentation
-
 from __future__ import absolute_import, division, print_function
 
 # TensorFlow and tf.keras
@@ -17,21 +16,29 @@ class_names = ['Playoffs', 'Not Playoffs']
 mydir = os.getcwd()
 
 
-train_data = np.zeros(90,5)
-counter = 0
-
-for root,dirs,files in os.walk(mydir):
-	for file in files:
-		if file.endswith(".csv"):
-			if counter < 3:
-				with open(file, "r") as myfile:
+train_data = np.load("training_data.npy")
+train_labels = np.load("training_labels.npy")
 
 
 
-'''
+
+test_data = np.load("testing_data.npy")
+test_labels = np.load("testing_labels.npy")
+
+train_data = train_data / train_data.max()
+test_data = test_data / test_data.max()
 
 
-(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+model = keras.Sequential([
+	keras.layers.Flatten(input_shape=(5,1)),
+	keras.layers.Dense(64, activation=tf.nn.relu),
+	keras.layers.Dense(10, activation=tf.nn.softmax)
+])
 
-print(type(train_images[0][0][0]))
-'''
+model.compile(optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+model.fit(train_data, train_labels, epochs=10000)
+
+test_loss, test_acc = model.evaluate(test_data, test_labels)
+
+print('Test accuracy:', test_acc)
