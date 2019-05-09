@@ -1,4 +1,3 @@
-#tutorial from the tensorflow documentation
 from __future__ import absolute_import, division, print_function
 
 # TensorFlow and tf.keras
@@ -18,8 +17,6 @@ mydir = os.getcwd()
 
 train_data = np.load("training_data.npy")
 train_labels = np.load("training_labels.npy")
-
-
 
 
 test_data = np.load("testing_data.npy")
