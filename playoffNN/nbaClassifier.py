@@ -30,14 +30,15 @@ model = keras.Sequential([
 	keras.layers.Flatten(input_shape=(7,1)),
 	keras.layers.Dense(64, activation=tf.nn.relu),
 	keras.layers.Dropout(0.5),
-	keras.layers.Dense(10, activation=tf.nn.relu),
-	keras.layers.Dropout(0.5),
-	keras.layers.Dense(2, activation=tf.nn.softmax)
+	keras.layers.Dense(10, activation=tf.nn.relu)
 ])
 
 model.compile(optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 model.fit(train_data, train_labels, epochs=10000, verbose=1)
+
+model.save_weights("./checkpoints/weights")
+#model.load_weights works in reverse)
 
 test_loss, test_acc = model.evaluate(test_data, test_labels)
 
