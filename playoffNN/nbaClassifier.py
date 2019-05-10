@@ -27,14 +27,17 @@ test_data = test_data / test_data.max()
 
 
 model = keras.Sequential([
-	keras.layers.Flatten(input_shape=(5,1)),
+	keras.layers.Flatten(input_shape=(7,1)),
 	keras.layers.Dense(64, activation=tf.nn.relu),
-	keras.layers.Dense(10, activation=tf.nn.softmax)
+	keras.layers.Dropout(0.5),
+	keras.layers.Dense(10, activation=tf.nn.relu),
+	keras.layers.Dropout(0.5),
+	keras.layers.Dense(2, activation=tf.nn.softmax)
 ])
 
 model.compile(optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(train_data, train_labels, epochs=10000)
+model.fit(train_data, train_labels, epochs=10000, verbose=1)
 
 test_loss, test_acc = model.evaluate(test_data, test_labels)
 
